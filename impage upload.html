@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        .preview {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            background: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px auto;
+        }
+        .preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        button {
+            background: #ccc;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            width: 80%;
+            border-radius: 5px;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .bottom-nav button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>CAPTURE</h2>
+        <p>Capture or upload pictures</p>
+        <div class="preview" id="preview">
+            <span>No Image</span>
+        </div>
+        <button onclick="openCamera()">CAPTURE</button>
+        <input type="file" id="fileInput" accept="image/*" onchange="previewImage(event)">
+        <button onclick="document.getElementById('fileInput').click()">Upload</button>
+    </div>
+    <div class="bottom-nav">
+        <button onclick="alert('Home clicked')">🏠</button>
+        <button onclick="alert('Camera clicked')">📷</button>
+        <button onclick="alert('Profile clicked')">👤</button>
+    </div>
+    <script>
+        function openCamera() {
+            let fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.capture = 'environment';
+            fileInput.onchange = previewImage;
+            fileInput.click();
+        }
+        function previewImage(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let preview = document.getElementById('preview');
+                    preview.innerHTML = '<img src="' + e.target.result + '" alt="Captured Image">';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>
