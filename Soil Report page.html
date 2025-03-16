@@ -130,11 +130,16 @@
         <button onclick="downloadPDF()">Download PDF</button>
     </div>
 
-    <nav class="bottom-nav">
-        <a href="#">🏠</a>
-        <a href="#" class="active">📷</a>
-        <a href="#">📊</a>
-    </nav>
+    <!-- Bottom Navigation -->
+    <div class="navbar">
+        <div class="nav-item"><a href="#" class="nav-link" data-page="about"><i class="fas fa-info-circle"></i> About</a></div>
+        <div class="nav-item"><a href="#" class="nav-link" data-page="history"><i class="fas fa-history"></i> History</a></div>
+        <div class="nav-item"><a href="#" class="nav-link" data-page="profile"><i class="fas fa-user"></i> Profile</a></div>
+        <div class="camera-button"><i class="fas fa-camera"></i></div>
+        <div class="nav-item"><a href="#" class="nav-link" data-page="soli-report"><i class="fas fa-chart-bar"></i> Soli Report</a></div>
+        <div class="nav-item"><a href="#" class="nav-link" data-page="map"><i class="fas fa-map-marker-alt"></i> Map</a></div>
+        <div class="nav-item"><a href="#" class="nav-link" data-page="about"><i class="fas fa-info-circle"></i> About</a></div>
+    </div>
 
     <script>
         function downloadPDF() {
@@ -173,7 +178,7 @@
             }
         }
     });
-    
+
     </script>
 
 </body>
