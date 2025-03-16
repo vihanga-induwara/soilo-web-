@@ -150,6 +150,30 @@
 
         // Example image display (replace with actual captured/uploaded image)
         document.getElementById("displayImage").src = "example-image.png";
+
+
+    
+        document.addEventListener("DOMContentLoaded", function () {
+        const navLinks = document.querySelectorAll(".nav-link");
+        
+        navLinks.forEach(link => {
+            link.addEventListener("click", function () {
+                navLinks.forEach(l => l.classList.remove("active"));
+                this.classList.add("active");
+                
+                localStorage.setItem("activePage", this.getAttribute("data-page"));
+            });
+        });
+
+        const activePage = localStorage.getItem("activePage");
+        if (activePage) {
+            const activeLink = document.querySelector(`.nav-link[data-page="${activePage}"]`);
+            if (activeLink) {
+                activeLink.classList.add("active");
+            }
+        }
+    });
+    
     </script>
 
 </body>
