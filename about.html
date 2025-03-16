@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Soil Health App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f9f9f9;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            min-height: 100vh;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .about-text {
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: justify;
+            margin-bottom: 20px;
+        }
+
+        /* Feedback Section */
+        .feedback-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .feedback-section h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            resize: none;
+        }
+
+        .send-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .send-btn:hover {
+            background: #1a252f;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .nav-item a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .nav-item a.active {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .camera-button {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        @media (min-width: 768px) {
+            .navbar {
+                width: 50%;
+                left: 50%;
+                transform: translateX(-50%);
+                border-radius: 15px 15px 0 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>ABOUT</h2>
+        <p class="about-text">
+            The Automated Soil Health Assessment App is a mobile-based application designed to provide farmers and 
+            agricultural specialists with a fast, cost-effective, and accurate way to assess soil health. The app 
+            leverages machine learning (ML) and satellite data integration to analyze soil properties such as moisture, 
+            organic content, and nutrient levels. It aims to replace traditional, time-consuming, and expensive soil 
+            testing methods with a non-invasive, real-time solution.
+        </p>
+
+        <!-- Feedback Section -->
+        <div class="feedback-section">
+            <h3><i class="fas fa-comment-alt"></i> Add Feedback</h3>
+            <textarea id="feedback" placeholder="How do you rate our app?"></textarea>
+            <button class="send-btn" onclick="sendFeedback()">Send Feedback</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="navbar">
+        <div class="nav-item"><a href="#" class="nav-link" data-page="about"><i class="fas fa-info-circle"></i> About</a></div>
+        <div class="nav-item"><a href="#" class="nav-link" data-page="history"><i class="fas fa-history"></i> History</a></div>
+        <div class="nav-item"><a href="#" class="nav-link" data-page="profile"><i class="fas fa-user"></i> Profile</a></div>
+        <div class="camera-button"><i class="fas fa-camera"></i></div>
+        <div class="nav-item"><a href="#" class="nav-link" data-page="soil-report"><i class="fas fa-chart-bar"></i> Soil Report</a></div>
+        <div class="nav-item"><a href="#" class="nav-link" data-page="map"><i class="fas fa-map-marker-alt"></i> Map</a></div>
+    </div>
+
+    <script>
+        // Handle Feedback Submission
+        function sendFeedback() {
+            const feedback = document.getElementById("feedback").value;
+            if (feedback.trim() === "") {
+                alert("Please enter your feedback before submitting.");
+                return;
+            }
+            alert("Thank you for your feedback!");
+            document.getElementById("feedback").value = ""; // Clear input
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const navLinks = document.querySelectorAll(".nav-link");
+
+            navLinks.forEach(link => {
+                link.addEventListener("click", function () {
+                    navLinks.forEach(l => l.classList.remove("active"));
+                    this.classList.add("active");
+
+                    localStorage.setItem("activePage", this.getAttribute("data-page"));
+                });
+            });
+
+            const activePage = localStorage.getItem("activePage");
+            if (activePage) {
+                const activeLink = document.querySelector(`.nav-link[data-page="${activePage}"]`);
+                if (activeLink) {
+                    activeLink.classList.add("active");
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
