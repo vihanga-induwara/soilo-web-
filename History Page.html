@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f9f9f9;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            min-height: 100vh;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        /* History List Styles */
+        .history-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .history-item img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .history-details {
+            flex-grow: 1;
+            margin-left: 15px;
+        }
+
+        .history-details h3 {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .history-details p {
+            font-size: 12px;
+            margin: 3px 0;
+            color: gray;
+        }
+
+        .status {
+            color: green;
+            font-weight: bold;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 12px 0;
+            box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .bottom-nav a {
+            text-decoration: none;
+            font-size: 24px;
+            color: black;
+        }
+
+        .bottom-nav a.active {
+            color: blue;
+        }
+
+        /* Responsive */
+        @media (min-width: 600px) {
+            .container {
+                max-width: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>HISTORY</h2>
+        <ul class="history-list" id="historyList">
+            <!-- Items will be added dynamically -->
+        </ul>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#"><i class="fa fa-home"></i></a>
+        <a href="#" class="active"><i class="fa fa-camera"></i></a>
+        <a href="#"><i class="fa fa-chart-bar"></i></a>
+    </nav>
+
+    <script>
+        // Example History Data (Fetched from Local Storage or API)
+        const historyData = [
+            { type: "Soil type-122", info: "info", location: "📍 location", status: "🟢 Activo" },
+            { type: "Soil type-122", info: "info", location: "📍 location", status: "🟢 Activo" },
+            { type: "Soil type-122", info: "info", location: "📍 location", status: "🟢 Activo" },
+            { type: "Soil type-122", info: "info", location: "📍 location", status: "🟢 Activo" },
+            { type: "Soil type-122", info: "info", location: "📍 location", status: "🟢 Activo" }
+        ];
+
+        // Populate History List
+        function loadHistory() {
+            const historyList = document.getElementById("historyList");
+            historyData.forEach(item => {
+                const listItem = document.createElement("li");
+                listItem.className = "history-item";
+                listItem.innerHTML = `
+                    <img src="sensor-icon.png" alt="Soil Sensor">
+                    <div class="history-details">
+                        <h3>${item.type}</h3>
+                        <p>${item.info}</p>
+                        <p>${item.location}</p>
+                    </div>
+                    <span class="status">${item.status}</span>
+                `;
+                historyList.appendChild(listItem);
+            });
+        }
+
+        // Load history on page load
+        loadHistory();
+    </script>
+
+</body>
+</html>
