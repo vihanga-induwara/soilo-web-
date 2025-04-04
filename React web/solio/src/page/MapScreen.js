@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Card, Button } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { Container, Card, Button } from "react-bootstrap";
 
 function MapScreen() {
   const [location, setLocation] = useState({ lat: null, lng: null });
+  const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY; // Use env variable
 
-  useEffect(() => {
+  const fetchLocation = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(
+      navigator.geolocation.getCurrentPosition(
         (position) => {
           setLocation({
             lat: position.coords.latitude,
@@ -20,6 +21,10 @@ function MapScreen() {
     } else {
       console.error("Geolocation is not supported by this browser.");
     }
+  };
+
+  useEffect(() => {
+    fetchLocation(); // Fetch location on mount
   }, []);
 
   return (
@@ -36,21 +41,24 @@ function MapScreen() {
           loading="lazy"
           allowFullScreen
           referrerPolicy="no-referrer-when-downgrade"
-          api_key="AIzaSyDcAlgSXALrsjIKcJzoE2y2aaPHlLKwbM0"
-          src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyDcAlgSXALrsjIKcJzoE2y2aaPHlLKwbM0&q=${location.lat},${location.lng}`}
+          src={`https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${location.lat},${location.lng}`}
         ></iframe>
       </Card>
 
       {/* Real-Time Location Display */}
       <Card className="mt-3 p-3 shadow-sm">
         <h5>Real-Time Location:</h5>
-        <p>Latitude: {location.lat || "Fetching..."}</p>
-        <p>Longitude: {location.lng || "Fetching..."}</p>
+        <p>Latitude: {location.lat ?? "Fetching..."}</p>
+        <p>Longitude: {location.lng ?? "Fetching..."}</p>
       </Card>
 
       {/* Buttons */}
-      <Button variant="primary" className="mt-3 mx-2">Refresh Location</Button>
-      <Button variant="danger" className="mt-3 mx-2">Exit Map</Button>
+      <Button variant="primary" className="mt-3 mx-2" onClick={fetchLocation}>
+        Refresh Location
+      </Button>
+      <Button variant="danger" className="mt-3 mx-2">
+        Exit Map
+      </Button>
     </Container>
   );
 }
