@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capture</title>
+    <title>Soil Color Analysis</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
@@ -13,15 +13,20 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
             background-color: #f4f4f4;
             margin: 0;
+            padding-bottom: 80px; /* Space for navbar */
         }
 
         .container {
             text-align: center;
             width: 90%;
-            max-width: 400px;
+            max-width: 600px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
         }
 
         .preview {
@@ -33,6 +38,9 @@
             justify-content: center;
             align-items: center;
             margin: 10px auto;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
         }
 
         .preview img {
@@ -42,13 +50,20 @@
         }
 
         button {
-            background: #ccc;
+            background: #2c3e50;
+            color: white;
             border: none;
-            padding: 10px;
-            margin: 5px;
+            padding: 12px 20px;
+            margin: 10px 5px;
             cursor: pointer;
             width: 80%;
             border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #1a2533;
         }
 
         .navbar {
@@ -62,6 +77,7 @@
             align-items: center;
             padding: 10px 0;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
 
         .nav-item {
@@ -107,6 +123,76 @@
             cursor: pointer;
         }
 
+        input[type="file"] {
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            border-radius: 8px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .color-info {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .color-sample {
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            border-radius: 5px;
+            vertical-align: middle;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .results h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .error-message {
+            color: red;
+            margin: 10px 0;
+            display: none;
+        }
+
         @media (min-width: 768px) {
             .navbar {
                 width: 50%;
@@ -115,26 +201,30 @@
                 border-radius: 15px 15px 0 0;
             }
         }
-
-        input[type="file"] {
-            display: none;
-        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h2>CAPTURE</h2>
-        <p>Capture or upload pictures</p>
+        <h2>SOIL COLOR ANALYSIS</h2>
+        <p>Capture or upload soil images for analysis</p>
         <div class="preview" id="preview">
             <span>No Image</span>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+            </div>
         </div>
+        <div class="error-message" id="error-message"></div>
         <button onclick="openCamera()">CAPTURE</button>
         <input type="file" id="fileInput" accept="image/*" onchange="previewImage(event)">
-        <button onclick="document.getElementById('fileInput').click()">Upload</button>
+        <button onclick="document.getElementById('fileInput').click()">UPLOAD</button>
+        <button id="analyzeBtn" onclick="analyzeImage()" disabled>ANALYZE</button>
+        
+        <div class="results" id="results">
+            <h3>Analysis Results</h3>
+            <div id="resultsContent"></div>
+        </div>
     </div>
-
-    
 
     <!-- Bottom Navigation -->
     <div class="navbar">
@@ -152,7 +242,7 @@
         </div>
 
         <div class="nav-item"><a href="Soil Report page.html" class="nav-link" data-page="soli-report"><i
-                    class="fas fa-chart-bar"></i> Soli
+                    class="fas fa-chart-bar"></i> Soil
                 Report</a></div>
         <div class="nav-item"><a href="map.html" class="nav-link" data-page="map"><i class="fas fa-map-marker-alt"></i>
                 Map</a>
@@ -163,6 +253,8 @@
 
 
     <script>
+        let currentImage = null;
+
         function openCamera() {
             let fileInput = document.createElement('input');
             fileInput.type = 'file';
@@ -171,6 +263,7 @@
             fileInput.onchange = previewImage;
             fileInput.click();
         }
+
         function previewImage(event) {
             let file = event.target.files[0];
             if (file) {
@@ -178,11 +271,121 @@
                 reader.onload = function (e) {
                     let preview = document.getElementById('preview');
                     preview.innerHTML = '<img src="' + e.target.result + '" alt="Captured Image">';
+                    // Add loading overlay back to preview
+                    preview.innerHTML += '<div class="loading" id="loading"><div class="spinner"></div></div>';
+                    
+                    // Enable analyze button
+                    document.getElementById('analyzeBtn').disabled = false;
+                    
+                    // Hide previous results and error message
+                    document.getElementById('results').style.display = 'none';
+                    document.getElementById('error-message').style.display = 'none';
+                    
+                    // Store the current file for later use
+                    currentImage = file;
                 };
                 reader.readAsDataURL(file);
             }
         }
 
+        function analyzeImage() {
+            if (!currentImage) {
+                showError('No image to analyze. Please capture or upload an image first.');
+                return;
+            }
+            
+            // Show loading indicator
+            document.getElementById('loading').style.display = 'flex';
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('file', currentImage);
+            
+            // Send request to backend
+            fetch('/analyze', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Error analyzing image');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                displayResults(data);
+            })
+            .catch(error => {
+                showError(error.message);
+            })
+            .finally(() => {
+                // Hide loading indicator
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            // Clear previous results
+            resultsContent.innerHTML = '';
+            
+            // Display color palette
+            if (data.palette_img) {
+                resultsContent.innerHTML += `
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h4>Dominant Colors</h4>
+                        <img src="${data.palette_img}" alt="Color Palette" style="max-width: 100%; border-radius: 8px;">
+                    </div>
+                `;
+            }
+            
+            // Display soil classification
+            if (data.soil_classes && data.soil_classes.length > 0) {
+                resultsContent.innerHTML += `<h4>Soil Classification</h4>`;
+                
+                const topClass = data.soil_classes[0];
+                resultsContent.innerHTML += `
+                    <div style="margin-bottom: 15px;">
+                        <strong>Cluster ${topClass.cluster}</strong> (${(topClass.probability * 100).toFixed(1)}% confidence)
+                    </div>
+                `;
+            }
+            
+            // Display color details
+            if (data.colors && data.colors.length > 0) {
+                resultsContent.innerHTML += `<h4>Color Details</h4>`;
+                
+                data.colors.forEach(color => {
+                    const rgb = color.rgb;
+                    const rgbString = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+                    
+                    resultsContent.innerHTML += `
+                        <div class="color-info">
+                            <div class="color-sample" style="background-color: ${rgbString};"></div>
+                            <strong>${color.percentage.toFixed(1)}%</strong>
+                            <div>LAB: ${color.lab[0]}, ${color.lab[1]}, ${color.lab[2]}</div>
+                            ${color.munsell ? `<div>Munsell: ${color.munsell.notation}</div>` : ''}
+                        </div>
+                    `;
+                });
+            }
+            
+            // Show results
+            resultsDiv.style.display = 'block';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            // Hide results
+            document.getElementById('results').style.display = 'none';
+        }
 
         document.addEventListener("DOMContentLoaded", function () {
             const navLinks = document.querySelectorAll(".nav-link");
